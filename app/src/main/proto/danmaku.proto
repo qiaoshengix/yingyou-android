@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package bilibili.community.service.dm.v1;
+option java_package = "xyz.qiaosheng.bilibili.data.remote.proto";
+option java_multiple_files = true;
+option java_outer_classname = "DanmakuProtocol";
+
+// Wire-compatible subset of the upstream protocol; protoc generates Java Lite.
+// Verified 2026-09-12 against the original protocol declaration mirrored at:
+// https://github.com/Janson20/bilibili-api-collect-mirror/blob/master/grpc_api/bilibili/community/service/dm/v1/dm.proto
+// Undeclared fields remain forward-compatible protobuf unknown fields.
+message DmSegMobileReply {
+  repeated DanmakuElem elems = 1;
+  // 0: available, 1: the video has closed danmaku.
+  int32 state = 2;
+}
+
+message DanmakuElem {
+  int64 id = 1;
+  int32 progress = 2; // Absolute video position in milliseconds.
+  int32 mode = 3;
+  int32 fontsize = 4;
+  uint32 color = 5;
+  string content = 7;
+  int32 weight = 9;
+  int32 pool = 11;
+  string idStr = 12;
+}

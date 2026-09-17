@@ -1,0 +1,60 @@
+# Build output and local caches
+.gradle/
+.kotlin/
+build/
+.externalNativeBuild/
+.cxx/
+captures/
+*.apk
+*.aab
+*.apks
+*.hprof
+*.log
+
+# IDE and machine-specific settings
+.idea/
+.vscode/
+*.iml
+local.properties
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Signing credentials and local secrets
+*.jks
+*.keystore
+*.p12
+*.pem
+key.properties
+keystore.properties
+secrets.properties
+.env
+.env.*
+
+# Local assistant configuration and instructions
+.trae/
+.trae-chat/
+.opencode/
+.claude/
+.cursor/
+.windsurf/
+.aider*
+.codex/
+.agents/
+.agent/
+AGENTS.md
+AGENTS.local.md
+CLAUDE.md
+GEMINI.md
+.cursorrules
+.windsurfrules
+opencode.json
+opencode.jsonc
+.mcp.json
+.github/copilot-instructions.md
+.github/instructions/
+.github/prompts/
+.github/agents/
+
+# Private learning notes, task history and resume material
+/docs/
