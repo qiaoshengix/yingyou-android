@@ -17,33 +17,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import xyz.qiaosheng.bilibili.ui.navigation.MainTab
 import xyz.qiaosheng.bilibili.ui.navigation.Routes
 
 /** 底栏负责主标签选择，并只消费自己占用的 inset，避免页面重复计算。 */
 @Composable
 internal fun MainTabScaffold(
-    selectedTab: String,
-    onSelectedTab: (String) -> Unit,
+    selectedTab: MainTab,
+    onSelectedTab: (MainTab) -> Unit,
     content: @Composable () -> Unit
 ) {
     Scaffold(
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
-                    selected = selectedTab == Routes.HOME,
-                    onClick = { onSelectedTab(Routes.HOME) },
+                    selected = selectedTab == MainTab.HOME,
+                    onClick = { onSelectedTab(MainTab.HOME) },
                     icon = { Icon(Icons.Default.Home, contentDescription = "首页") },
                     label = { Text("首页") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == Routes.DYNAMIC,
-                    onClick = { onSelectedTab(Routes.DYNAMIC) },
+                    selected = selectedTab == MainTab.DYNAMIC,
+                    onClick = { onSelectedTab(MainTab.DYNAMIC) },
                     icon = { Icon(Icons.Default.PlayCircle, contentDescription = "动态") },
                     label = { Text("动态") }
                 )
                 NavigationBarItem(
-                    selected = selectedTab == Routes.MINE,
-                    onClick = { onSelectedTab(Routes.MINE) },
+                    selected = selectedTab == MainTab.MINE,
+                    onClick = { onSelectedTab(MainTab.MINE) },
                     icon = { Icon(Icons.Default.Person, contentDescription = "我的") },
                     label = { Text("我的") }
                 )

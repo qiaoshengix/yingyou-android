@@ -1,6 +1,50 @@
 package xyz.qiaosheng.bilibili.ui.navigation
 
-object Routes {
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
+
+enum class MainTab {
+    HOME,
+    DYNAMIC,
+    MINE
+}
+
+sealed interface Routes : NavKey {
+
+    @Serializable
+    data object Main : NavKey
+
+    @Serializable
+    data object Search : NavKey
+
+    @Serializable
+    data object Login : NavKey
+
+    @Serializable
+    data object History : NavKey
+
+    @Serializable
+    data object Favorites : NavKey
+
+    @Serializable
+    data object Likes : NavKey
+
+    @Serializable
+    data object Offline : NavKey
+
+    @Serializable
+    data object ServiceLab : NavKey
+
+    @Serializable
+    data class VideoDetail(
+        val bvid: String,
+        val cid: Long = 0L,
+        val offline: Boolean = false,
+    ) : NavKey
+}
+
+
+object Routess {
     // 三个底部 Tab 共用的根导航目的地
     const val MAIN = "main"
 

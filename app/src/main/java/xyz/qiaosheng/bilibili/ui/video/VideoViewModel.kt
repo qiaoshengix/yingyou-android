@@ -3,7 +3,6 @@ package xyz.qiaosheng.bilibili.ui.video
 import android.content.ComponentName
 import android.content.Context
 import androidx.annotation.OptIn
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.C
@@ -15,6 +14,9 @@ import androidx.media3.session.SessionToken
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.google.common.util.concurrent.ListenableFuture
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
@@ -48,25 +50,33 @@ import xyz.qiaosheng.bilibili.ui.video.player.VideoQuality
 import xyz.qiaosheng.bilibili.ui.video.player.preferredVideoStream
 import xyz.qiaosheng.bilibili.ui.video.player.streamingMediaItem
 import java.io.IOException
-import javax.inject.Inject
 
 /** 协调详情加载、播放服务连接和评论提交；播放本身由 PlaybackService 承载。 */
-@HiltViewModel
-class VideoViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = VideoViewModel.Factory::class)
+class VideoViewModel @AssistedInject constructor(
     @ApplicationContext private val context: Context,
     private val videoRepository: VideoRepository,
     private val errorReporter: ErrorReporter,
     private val libraryRepository: LibraryRepository,
     private val offlineRepository: OfflineRepository,
     private val authSessionManager: AuthSessionManager,
-    savedStateHandle: SavedStateHandle
+    @Assisted private val bvid: String,
+    @Assisted private val cid: Long,
+    @Assisted private val offline: Boolean,
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            bvid: String,
+            cid: Long,
+            offline: Boolean
+        ): VideoViewModel
+    }
+
     private val _uiState = MutableStateFlow<UiState<VideoUiState>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    private val bvid: String = savedStateHandle["bvid"] ?: ""
-    private val requestedCid: Long? = savedStateHandle.get<Long>("cid")?.takeIf { it > 0L }
-    private val offlineRequested: Boolean = savedStateHandle["offline"] ?: false
     private var currentPage: VideoPageData? = null
     private var playbackAccountId = 0L
     private var initialPositionMs = 0L
@@ -110,13 +120,13 @@ class VideoViewModel @Inject constructor(
             _uiState.value = UiState.Loading
             try {
                 playbackAccountId = currentAccountId()
-                if (offlineRequested) {
-                    val cached = offlineRepository.getPlayable(bvid, requestedCid)
+                if (offline) {
+                    val cached = offlineRepository.getPlayable(bvid, cid)
                         ?: throw InvalidResponseException("缓存不完整或已删除，请到离线缓存页面重试")
                     openOffline(cached)
                     return@launch
                 }
-                val pageData = videoRepository.getVideoPage(bvid, requestedCid)
+                val pageData = videoRepository.getVideoPage(bvid, cid)
                 val playInfo = videoRepository.getVideoPlayUrl(bvid, pageData.cid)
                 val dash = playInfo.dash ?: throw InvalidResponseException("接口未返回 DASH 数据")
                 videoStreams = dash.video
@@ -162,10 +172,10 @@ class VideoViewModel @Inject constructor(
             } catch (exception: CancellationException) {
                 throw exception
             } catch (exception: Exception) {
-                if (!offlineRequested) {
+                if (!offline) {
                     try {
                         // 远程不可用时仍能从完整缓存恢复；离线入口从一开始就不发网络请求。
-                        val cached = offlineRepository.getPlayable(bvid, requestedCid)
+                        val cached = offlineRepository.getPlayable(bvid, cid)
                         if (cached != null) {
                             playbackAccountId = currentAccountId()
                             openOffline(cached)

@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LifecycleStartEffect
-import androidx.navigation.NavBackStackEntry
 import androidx.paging.compose.collectAsLazyPagingItems
 import xyz.qiaosheng.bilibili.core.ui.ErrorContent
 import xyz.qiaosheng.bilibili.core.ui.UiState
@@ -53,10 +52,9 @@ import xyz.qiaosheng.bilibili.ui.video.player.VideoPlayerLoading
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoDetailScreen(
-    backStackEntry: NavBackStackEntry,
     onBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    viewModel: VideoViewModel = hiltViewModel(backStackEntry)
+    viewModel: VideoViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -64,9 +62,9 @@ fun VideoDetailScreen(
     val comments = viewModel.comments.collectAsLazyPagingItems()
 
     val player by viewModel.player.collectAsStateWithLifecycle()
-    val danmakuViewModel: DanmakuViewModel = hiltViewModel(backStackEntry)
+    val danmakuViewModel: DanmakuViewModel = hiltViewModel()
     val danmaku by danmakuViewModel.state.collectAsStateWithLifecycle()
-    val actionsViewModel: VideoActionsViewModel = hiltViewModel(backStackEntry)
+    val actionsViewModel: VideoActionsViewModel = hiltViewModel()
     val actions by actionsViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
