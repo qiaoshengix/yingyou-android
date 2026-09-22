@@ -98,6 +98,8 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
 
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
+
 [plugins]
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 android-application = { id = "com.android.application", version.ref = "agp" }
